@@ -16,11 +16,11 @@ void Graph::addEdge(unsigned int u, unsigned int v, DIRECTION dir) {
     
     this->edge_count++;
 }
+
+void Graph::delEdge(unsigned int u, unsigned int v, DIRECTION dir) {
+}
     
-Graph::Graph(unsigned int r, double a) {
-    this->reps = r;
-    this->transmit_prob = a;
-    this->edge_count = 0;
+Graph::Graph() : node_count(0), dir(UNDIR), edge_count(0) {
 }
 
 void Graph::setGraph(unsigned int n, DIRECTION d) {
@@ -37,14 +37,18 @@ unsigned int Graph::get_node_count() {
 unsigned long long Graph::get_edge_count() {
     return edge_count;
 }
-    
+
+const std::vector<unsigned int>& Graph::get_neighbors(unsigned int u) {
+    return edge_list[u];
+}
+
+// TODO: nodes are assumed to be labeled 0 to n-1
 void Graph::readFromFile(std::string inputFileName) {
     std::ifstream inputFile;
     inputFile.open(inputFileName);
     
     if (!inputFile) {
-        std::cerr << "Unable to open file " << inputFileName << std::endl;
-        exit(1);   // call system to stop
+        throw std::ios_base::failure("Failed to open file: " + inputFileName);
     }
     
     unsigned int n, d; // TODO: try-catch for n ?
@@ -64,6 +68,7 @@ void Graph::readFromFile(std::string inputFileName) {
         std::cerr << "Invalid argument edge count: " << m << " counted as: " << edge_count << std::endl;
     }
     
+    std::cout << "Graph loaded successfully!" << std::endl;
     inputFile.close();
 }
 

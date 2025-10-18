@@ -9,7 +9,6 @@
 #include <fstream>
 #include <iostream>
 #include <random>
-#include <stdio.h>
 #include <string>
 #include <vector>
 
@@ -19,18 +18,17 @@ class Graph {
     DIRECTION dir;
     unsigned int node_count; // node limit to 4.3e9
     unsigned long long edge_count; // edge limit to 1.8e19
-    double transmit_prob;
-    unsigned int reps;
-    std::vector<std::vector<unsigned int>> edge_list; // TODO: adjacency list vs. matrix ?
+    std::vector<std::vector<unsigned int>> edge_list; // TODO: adjacency list vs. bool matrix? former for sparse graphs - latter for dense
     
     void addEdge(unsigned int, unsigned int, DIRECTION);
     void delEdge(unsigned int, unsigned int, DIRECTION);
     
 public:
-    Graph(unsigned int, double);
+    Graph();
     void setGraph(unsigned int, DIRECTION);
     unsigned int get_node_count();
     unsigned long long get_edge_count();
+    const std::vector<unsigned int>& get_neighbors(unsigned int);
     
     void readFromFile(std::string inputFile);
     void printGraph(); // for testing small graphs
