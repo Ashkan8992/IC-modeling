@@ -21,12 +21,9 @@ class Sim {
     
 public:
     Sim(Graph&, unsigned int, double);
-    // double get_alpha();
     
-    void generate_sources();
-    
-    void runMonteCarloSim();
-    
+    void generate_sources(); // TODO: Multiple options
+    void runMonteCarloSim(); // Independent Cascade Model
     void printAccessProbs();
 };
 

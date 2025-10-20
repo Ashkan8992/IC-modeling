@@ -5,8 +5,8 @@
 
 #include "graph.hpp"
     
-void Graph::addEdge(unsigned int u, unsigned int v, DIRECTION dir) {
-    if (std::find(edge_list[u].begin(), edge_list[u].end(), v) != edge_list[u].end()) { return; }
+void Graph::addEdge(unsigned int u, unsigned int v) {
+    if (edgeExist(u, v)) { return; }
     
     edge_list[u].push_back(v);
     
@@ -17,11 +17,38 @@ void Graph::addEdge(unsigned int u, unsigned int v, DIRECTION dir) {
     this->edge_count++;
 }
 
-void Graph::delEdge(unsigned int u, unsigned int v, DIRECTION dir) {
+void Graph::delEdge(unsigned int u, unsigned int v) {
+    if (!edgeExist(u, v)) { return; }
+    
+    edge_list[u].erase(std::remove(edge_list[u].begin(), edge_list[u].end(), v), edge_list[u].end());
+    
+    if (dir == UNDIR) {
+        edge_list[v].erase(std::remove(edge_list[v].begin(), edge_list[v].end(), u), edge_list[v].end());
+    }
+    
+    this->edge_count--;
+}
+
+bool Graph::edgeExist(unsigned int u, unsigned int v) {
+    return std::find(edge_list[u].begin(), edge_list[u].end(), v) != edge_list[u].end();
+}
+
+void Graph::addRandEdg(unsigned int u) {
+    unsigned int v;
+    std::random_device rand_dev;
+    std::mt19937 generator(rand_dev());
+    std::uniform_int_distribution<unsigned int> distr(0, node_count - 1);
+    
+    if (u == UINT_MAX) { u = distr(generator); }
+    do {
+        v = distr(generator);
+    } while(u == v || edgeExist(u, v));
+    
+    std::cout << "Edge Added: " << u << " " << v << std::endl;
+    addEdge(u, v);
 }
     
-Graph::Graph() : node_count(0), dir(UNDIR), edge_count(0) {
-}
+Graph::Graph() : node_count(0), dir(UNDIR), edge_count(0) {}
 
 void Graph::setGraph(unsigned int n, DIRECTION d) {
     this->node_count = n;
@@ -61,7 +88,7 @@ void Graph::readFromFile(std::string inputFileName) {
     
     unsigned int u, v;  // TODO: try-catch for u, v ?
     while (inputFile >> u >> v) {
-        this->addEdge(u, v, dir);
+        this->addEdge(u, v);
     }
     
     if (m != edge_count) { // sanity check
