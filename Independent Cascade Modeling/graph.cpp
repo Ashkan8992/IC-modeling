@@ -5,7 +5,7 @@
 
 #include "graph.hpp"
     
-void Graph::addEdge(unsigned int u, unsigned int v) {
+void Graph::addEdge(int u, int v) {
     if (edgeExist(u, v)) { return; }
     
     edge_list[u].push_back(v);
@@ -17,7 +17,7 @@ void Graph::addEdge(unsigned int u, unsigned int v) {
     this->edge_count++;
 }
 
-void Graph::delEdge(unsigned int u, unsigned int v) {
+void Graph::delEdge(int u, int v) {
     if (!edgeExist(u, v)) { return; }
     
     edge_list[u].erase(std::remove(edge_list[u].begin(), edge_list[u].end(), v), edge_list[u].end());
@@ -29,15 +29,15 @@ void Graph::delEdge(unsigned int u, unsigned int v) {
     this->edge_count--;
 }
 
-bool Graph::edgeExist(unsigned int u, unsigned int v) {
+bool Graph::edgeExist(int u, int v) {
     return std::find(edge_list[u].begin(), edge_list[u].end(), v) != edge_list[u].end();
 }
 
-void Graph::addRandEdg(unsigned int u) {
-    unsigned int v;
+void Graph::addRandEdg(int u) {
+    int v;
     std::random_device rand_dev;
     std::mt19937 generator(rand_dev());
-    std::uniform_int_distribution<unsigned int> distr(0, node_count - 1);
+    std::uniform_int_distribution<int> distr(0, node_count - 1);
     
     if (u == UINT_MAX) { u = distr(generator); }
     do {
@@ -50,22 +50,22 @@ void Graph::addRandEdg(unsigned int u) {
     
 Graph::Graph() : node_count(0), dir(UNDIR), edge_count(0) {}
 
-void Graph::setGraph(unsigned int n, DIRECTION d) {
+void Graph::setGraph(int n, DIRECTION d) {
     this->node_count = n;
     this->dir = d;
     
     edge_list.resize(n);
 }
 
-unsigned int Graph::get_node_count() {
+int Graph::get_node_count() const {
     return node_count;
 }
 
-unsigned long long Graph::get_edge_count() {
+long long Graph::get_edge_count() const {
     return edge_count;
 }
 
-const std::vector<unsigned int>& Graph::get_neighbors(unsigned int u) {
+const std::vector<int>& Graph::get_neighbors(int u) const {
     return edge_list[u];
 }
 
@@ -78,16 +78,19 @@ void Graph::readFromFile(std::string inputFileName) {
         throw std::ios_base::failure("Failed to open file: " + inputFileName);
     }
     
-    unsigned int n, d; // TODO: try-catch for n ?
-    unsigned long long m;
+    int n, d; // TODO: try-catch for n ?
+    long long m;
     inputFile >> n >> d >> m;
     if (d != 0 && d != 1) { std::cerr << "Invalid argument: Direction 0 for undir or 1 dir" << std::endl; }
     DIRECTION dir = static_cast<DIRECTION>(d);
     
     this->setGraph(n, static_cast<DIRECTION>(dir));
     
-    unsigned int u, v;  // TODO: try-catch for u, v ?
+    int u, v;
     while (inputFile >> u >> v) {
+        if (u < 0 || u >= n || v < 0 || v >= n) {
+            throw std::ios_base::failure("Invalid edge argument: (" + std::to_string(u) + ", " + std::to_string(v) + ")\n");
+        }
         this->addEdge(u, v);
     }
     
@@ -101,7 +104,7 @@ void Graph::readFromFile(std::string inputFileName) {
 
 // for testing small graphs
 void Graph::printGraph(){
-    for (unsigned int v = 0; v < edge_list.size(); ++v) {
+    for (size_t v = 0; v < edge_list.size(); ++v) {
         std::cout << v << ": ";
         for (auto u : edge_list[v]) {
             std::cout << u << " ";

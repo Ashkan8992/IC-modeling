@@ -9,22 +9,26 @@
 #include <math.h>
 #include <queue>
 #include <random>
+#include <thread>
 
 #include "graph.hpp"
 
 class Sim {
     Graph& net;
-    unsigned int reps;
+    size_t reps;
+    int src_count;
     double transmit_prob;
-    std::vector<double> access_probs;
     std::vector<int> sources;
     
 public:
-    Sim(Graph&, unsigned int, double);
+    std::vector<double> access_probs;
     
-    void generate_sources(); // TODO: Multiple options
-    void runMonteCarloSim(); // Independent Cascade Model
-    void printAccessProbs();
+    Sim(Graph&, size_t, double, int, std::string);
+    
+    void generate_sources(std::string); // Options: Random, Max-Degree TODO: Central, etc.
+    void runSim(size_t, std::vector<int>&); // Independent Cascade Model
+    void runParallelSim(int); // Parallel of the above
+    void printAccessProbs(std::string);
 };
 
 #endif /* simulation_hpp */
