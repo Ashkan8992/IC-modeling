@@ -15,6 +15,7 @@
 enum DIRECTION {UNDIR = 0, DIR = 1};
 
 class Graph {
+    // TODO: group? wight? threshold?
     DIRECTION dir;
     int node_count; // node limit to 4.3e9
     long long edge_count; // edge limit to 1.8e19

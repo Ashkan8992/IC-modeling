@@ -5,15 +5,29 @@
 
 #include "simulation.hpp"
 
-Sim::Sim(Graph& g, size_t r, double alpha, int cnt, std::string mode) : net(g), reps(r), transmit_prob(alpha), src_count(cnt) {
+Sim::Sim(Graph& g, size_t r, double alpha, int cnt, std::string mode, int thread_count) :
+        net(g), reps(r), transmit_prob(alpha), src_count(cnt), num_threads(thread_count) {
     access_probs.resize(g.get_node_count(), 0.0);
     generate_sources(mode);
+}
+
+int Sim::get_src_count() {
+    return src_count;
+}
+
+Graph& Sim::get_graph() {
+    return net;
 }
 
 // TODO: implement multiple options: Random, Max-Degree, Central, etc.
 void Sim::generate_sources(std::string mode) {
     sources = std::vector<int> (1, 0);
     // sources.reserve(src_count);
+}
+
+void Sim::add_source(int src) {
+    sources.push_back(src);
+    ++src_count;
 }
 
 void Sim::runSim(size_t reps, std::vector<int> &local_count) {
@@ -52,7 +66,7 @@ void Sim::runSim(size_t reps, std::vector<int> &local_count) {
     } // One IC model done
 }
 
-void Sim::runParallelSim(int num_threads) {
+void Sim::runParallelSim() {
     size_t reps_per_thread = reps / num_threads;
     std::vector<std::thread> threads;
     std::vector<std::vector<int>> local_counts(num_threads, std::vector<int>(net.get_node_count(), 0));

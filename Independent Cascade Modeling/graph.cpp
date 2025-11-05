@@ -78,11 +78,25 @@ void Graph::readFromFile(std::string inputFileName) {
         throw std::ios_base::failure("Failed to open file: " + inputFileName);
     }
     
-    int n, d; // TODO: try-catch for n ?
-    long long m;
-    inputFile >> n >> d >> m;
+    int n, d;
+    try {
+        inputFile >> n;
+    } catch (const std::invalid_argument& e) {
+        std::cerr << "Invalid argument: " << e.what() << std::endl;
+    } catch (const std::out_of_range& e) {
+        std::cerr << "Out of range: " << e.what() << std::endl;
+    }
+    inputFile >> d;
     if (d != 0 && d != 1) { std::cerr << "Invalid argument: Direction 0 for undir or 1 dir" << std::endl; }
     DIRECTION dir = static_cast<DIRECTION>(d);
+    long long m;
+    try {
+        inputFile >> m;
+    } catch (const std::invalid_argument& e) {
+        std::cerr << "Invalid argument: " << e.what() << std::endl;
+    } catch (const std::out_of_range& e) {
+        std::cerr << "Out of range: " << e.what() << std::endl;
+    }
     
     this->setGraph(n, static_cast<DIRECTION>(dir));
     
@@ -102,7 +116,7 @@ void Graph::readFromFile(std::string inputFileName) {
     inputFile.close();
 }
 
-// for testing small graphs
+// print on console: for testing small graphs
 void Graph::printGraph(){
     for (size_t v = 0; v < edge_list.size(); ++v) {
         std::cout << v << ": ";
