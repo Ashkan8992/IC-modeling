@@ -9,6 +9,7 @@
 #include <math.h>
 #include <queue>
 #include <random>
+#include <set>
 #include <thread>
 
 #include "graph.hpp"
@@ -18,7 +19,7 @@ class Sim {
     size_t reps;
     int src_count;
     double transmit_prob;
-    std::vector<int> sources;
+    std::set<int> sources;
     int num_threads;
     
 public:
@@ -30,7 +31,13 @@ public:
     Graph& get_graph();
     
     void generate_sources(std::string); // Options: Random, Max-Degree TODO: Central, etc.
-    void add_source(int);
+    void add_src(int);
+    void remove_src(int);
+    bool contain_src(int);
+    
+    double get_average(); // Returns the average access of all nodes
+    double get_min(); // Returns the min access among all nodes
+    
     void runSim(size_t, std::vector<int>&); // Independent Cascade Model
     void runParallelSim(); // Parallel of the above
     void printAccessProbs(std::string);

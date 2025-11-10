@@ -81,10 +81,16 @@ int main(int argc, const char * argv[]) {
     g.readFromFile(inputFile);
     // std::cout << "From: " << inputFile << std::endl;
     
+    // Sanity check
+    if (k + init_k > g.get_node_count()) {
+        std::cerr << "Number of sources additions " << k << " will exceed number of nodes.\n";
+        k = g.get_node_count() - init_k;
+    }
+    
     Sim sim(g, reps, alpha, init_k, seed_mode, num_threads); // Setup simulation
     
     // sim.runParallelSim();
-    naive_myOpic(sim, k);
+    reach(sim, k);
     
     std::string outputFile = argv[2];
     sim.printAccessProbs(outputFile); // output access probs

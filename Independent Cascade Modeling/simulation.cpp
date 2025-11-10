@@ -21,13 +21,34 @@ Graph& Sim::get_graph() {
 
 // TODO: implement multiple options: Random, Max-Degree, Central, etc.
 void Sim::generate_sources(std::string mode) {
-    sources = std::vector<int> (1, 0);
+    sources = {0};
     // sources.reserve(src_count);
 }
 
-void Sim::add_source(int src) {
-    sources.push_back(src);
+void Sim::add_src(int src) {
+    sources.insert(src);
     ++src_count;
+}
+
+void Sim::remove_src(int src) {
+    sources.erase(src);
+    --src_count;
+}
+
+bool Sim::contain_src(int src) {
+    if (sources.find(src) != sources.end()) {
+        return true;
+    }
+    return false;
+}
+
+double Sim::get_min() { // TODO: Check this
+    return *std::min(access_probs.begin(), access_probs.end());
+}
+
+double Sim::get_average() {
+    double sum = std::accumulate(access_probs.begin(), access_probs.end(), 0.0);
+    return sum / access_probs.size(); // or net.get_node_count()
 }
 
 void Sim::runSim(size_t reps, std::vector<int> &local_count) {

@@ -6,7 +6,6 @@
 #include "intervention.hpp"
 
 void myOpic(Sim& sim, int k) {
-    std:: vector<int> sources(k);
     
     for (int i = 0; i < k; ++i) {
         sim.runParallelSim();
@@ -18,16 +17,15 @@ void myOpic(Sim& sim, int k) {
             return;
         }
         int min_index = static_cast<int>(min_it - sim.access_probs.begin());
-        sim.add_source(min_index);
+        sim.add_src(min_index);
         std::cout << "New source id: " << min_index << std::endl;
     }
+    
+    sim.runParallelSim(); // Update access probs
 }
 
 void naive_myOpic(Sim& sim, int k) {
-    std:: vector<int> sources(k);
     sim.runParallelSim();
-    
-    k = std::min(k, sim.get_graph().get_node_count() - sim.get_src_count());
 
     std::vector<std::pair<int, double>> pairs;
     pairs.reserve(sim.access_probs.size());
@@ -40,7 +38,36 @@ void naive_myOpic(Sim& sim, int k) {
     pairs.resize(k);
     
     for (auto pair : pairs) {
-        sim.add_source(pair.first);
+        sim.add_src(pair.first);
         std::cout << "New source id: " << pair.first << std::endl;
     }
+    
+    sim.runParallelSim(); // Update access probs
+}
+
+void reach(Sim& sim, int k) {
+    
+    for (int i = 0; i < k; ++i) {
+        int next_src = 0;
+        double max_influ = 0;
+        
+        for (int node = 0; node < sim.get_graph().get_node_count(); ++node) {
+            if (sim.contain_src(node)) { continue; }
+            sim.add_src(node);
+            sim.runParallelSim();
+            sim.remove_src(node);
+            if (max_influ < sim.get_average()) {
+                max_influ = sim.get_average();
+                next_src = node;
+            }
+        }
+        sim.add_src(next_src);
+        std::cout << "New source id: " << next_src << std::endl;
+    }
+    
+    sim.runParallelSim(); // Update access probs
+}
+
+void naiveReach(Sim& sim, int k) {
+    
 }
