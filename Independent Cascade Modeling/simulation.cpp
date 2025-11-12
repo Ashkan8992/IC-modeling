@@ -51,7 +51,7 @@ double Sim::get_average() {
     return sum / access_probs.size(); // or net.get_node_count()
 }
 
-void Sim::runSim(size_t reps, std::vector<int> &local_count) {
+void Sim::runThreadSim(size_t reps, std::vector<int> &local_count) {
     // Set random generator: Undeterministic
     std::random_device rand_dev;
     std::mt19937 generator(rand_dev());
@@ -60,8 +60,10 @@ void Sim::runSim(size_t reps, std::vector<int> &local_count) {
     // Each Monte Carlo Simulation
     for (size_t iter = 0; iter < reps; ++iter) {
         
+        // Track nodes visited
         std::vector<bool> visited(net.get_node_count(), false);
         
+        // Initiate BFS with sources
         std::queue<int> bfs;
         for (auto src : sources) {
             bfs.push(src);
@@ -69,7 +71,7 @@ void Sim::runSim(size_t reps, std::vector<int> &local_count) {
             ++local_count[src];
         }
         
-        // Run the IC spread
+        // Run BFS
         while (!bfs.empty()) {
             int currNode = bfs.front();
             bfs.pop();
@@ -88,13 +90,14 @@ void Sim::runSim(size_t reps, std::vector<int> &local_count) {
 }
 
 void Sim::runParallelSim() {
+    // Divide reps by each thread
     size_t reps_per_thread = reps / num_threads;
     std::vector<std::thread> threads;
     std::vector<std::vector<int>> local_counts(num_threads, std::vector<int>(net.get_node_count(), 0));
     
     // Launch worker threads
     for (unsigned int t = 0; t < num_threads; ++t) {
-        threads.emplace_back(&Sim::runSim, this, reps_per_thread, std::ref(local_counts[t]));
+        threads.emplace_back(&Sim::runThreadSim, this, reps_per_thread, std::ref(local_counts[t]));
     }
 
     // Join threads

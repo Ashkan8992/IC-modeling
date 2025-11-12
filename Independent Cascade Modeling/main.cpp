@@ -90,7 +90,7 @@ int main(int argc, const char * argv[]) {
     Sim sim(g, reps, alpha, init_k, seed_mode, num_threads); // Setup simulation
     
     // sim.runParallelSim();
-    reach(sim, k);
+    naiveReach(sim, k);
     
     std::string outputFile = argv[2];
     sim.printAccessProbs(outputFile); // output access probs

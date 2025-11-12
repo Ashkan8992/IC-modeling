@@ -34,15 +34,16 @@ bool Graph::edgeExist(int u, int v) {
 }
 
 void Graph::addRandEdg(int u) {
-    int v;
+    // Set random generator: Undeterministic
     std::random_device rand_dev;
     std::mt19937 generator(rand_dev());
     std::uniform_int_distribution<int> distr(0, node_count - 1);
     
-    if (u == UINT_MAX) { u = distr(generator); }
+    int v;
+    if (u == UINT_MAX) { u = distr(generator); } // Case: both nodes at random
     do {
         v = distr(generator);
-    } while(u == v || edgeExist(u, v));
+    } while(u == v || edgeExist(u, v)); // Repeat until it's a new edge
     
     std::cout << "Edge Added: " << u << " " << v << std::endl;
     addEdge(u, v);
@@ -78,6 +79,7 @@ void Graph::readFromFile(std::string inputFileName) {
         throw std::ios_base::failure("Failed to open file: " + inputFileName);
     }
     
+    // Read the first line
     int n, d;
     try {
         inputFile >> n;
@@ -98,8 +100,10 @@ void Graph::readFromFile(std::string inputFileName) {
         std::cerr << "Out of range: " << e.what() << std::endl;
     }
     
+    // Set the graph
     this->setGraph(n, static_cast<DIRECTION>(dir));
     
+    // Read the edges
     int u, v;
     while (inputFile >> u >> v) {
         if (u < 0 || u >= n || v < 0 || v >= n) {

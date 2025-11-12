@@ -24,16 +24,16 @@ class Graph {
 public:
     Graph();
     void setGraph(int, DIRECTION); // Couldn't include in the Constructor as it needs to read the graph first
-    int get_node_count() const;
-    long long get_edge_count() const;
-    const std::vector<int>& get_neighbors(int) const;
+    int get_node_count() const; // Return #nodes
+    long long get_edge_count() const; // Return #edges
+    const std::vector<int>& get_neighbors(int) const; // Return list of neighbors
     
-    void addEdge(int, int);
-    void delEdge(int, int);
-    bool edgeExist(int, int);
-    void addRandEdg(int = UINT_MAX); // Option to fix the source or completely at random (pass u or UINT_MAX)
+    void addEdge(int, int); // Add an edge
+    void delEdge(int, int); // Remove an edge
+    bool edgeExist(int, int); // Return if edge exists
+    void addRandEdg(int = UINT_MAX); // Add random edge: Option to fix the source or completely at random (pass u or UINT_MAX)
     
-    void readFromFile(std::string inputFile); // Format: n, m, dir, ... (edge list: u, v)
+    void readFromFile(std::string inputFile); // Read graph - Format: n, m, dir, ... (edge list: u, v)
     void printGraph(); // For testing small graphs
 };
 

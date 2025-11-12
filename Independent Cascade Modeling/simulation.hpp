@@ -27,20 +27,20 @@ public:
     
     Sim(Graph&, size_t, double, int, std::string, int);
     
-    int get_src_count();
-    Graph& get_graph();
+    int get_src_count(); // Return number of sources
+    Graph& get_graph(); // Return graph
     
     void generate_sources(std::string); // Options: Random, Max-Degree TODO: Central, etc.
-    void add_src(int);
-    void remove_src(int);
-    bool contain_src(int);
+    void add_src(int); // Add a source
+    void remove_src(int); // Remove a source
+    bool contain_src(int); // Return if node is a source
     
     double get_average(); // Returns the average access of all nodes
     double get_min(); // Returns the min access among all nodes
     
-    void runSim(size_t, std::vector<int>&); // Independent Cascade Model
-    void runParallelSim(); // Parallel of the above
-    void printAccessProbs(std::string);
+    void runParallelSim(); // Parallel of Independent Cascade Model (ICM) simulation
+    void runThreadSim(size_t, std::vector<int>&); // Each thred of ICM simulation
+    void printAccessProbs(std::string); // Print the access probs
 };
 
 #endif /* simulation_hpp */
